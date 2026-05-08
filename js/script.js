@@ -1,6 +1,6 @@
 /* =========================================================
    BAKKERIJ PETERSE — SCRIPT.JS
-   - Header en footer dynamisch laden
+   - Header en footer dynamisch laden (multi-element support)
    - Mobile menu toggle
    - Active link highlighten op basis van data-page
    - Scroll reveal animaties
@@ -10,7 +10,7 @@
 (function () {
   'use strict';
 
-  /* ---------- 1. Header en footer laden via fetch() ---------- */
+  /* ---------- 1. Component laden via fetch() — ondersteunt meerdere top-level elementen ---------- */
   async function loadComponent(id, url) {
     const placeholder = document.getElementById(id);
     if (!placeholder) return;
@@ -18,7 +18,14 @@
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
-      placeholder.outerHTML = html;
+      // DocumentFragment voor robuuste multi-element insertion
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+      const fragment = document.createDocumentFragment();
+      while (temp.firstChild) {
+        fragment.appendChild(temp.firstChild);
+      }
+      placeholder.replaceWith(fragment);
     } catch (err) {
       console.warn(`Component ${url} kon niet geladen worden:`, err);
     }
@@ -37,7 +44,6 @@
       document.body.style.overflow = isOpen ? 'hidden' : '';
     });
 
-    // Sluit menu wanneer een link wordt aangeklikt
     menu.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => {
         toggle.classList.remove('open');
@@ -90,7 +96,6 @@
       loadComponent('site-header', 'components/header.html'),
       loadComponent('site-footer', 'components/footer.html'),
     ]);
-    // Functies die afhangen van de geladen componenten
     initMobileMenu();
     setActiveLink();
     setYear();
