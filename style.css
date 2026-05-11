@@ -395,7 +395,7 @@ p { margin: 0 0 1.1em; }
 }
 
 .logo img {
-  height: 56px;
+  height: 68px;
   width: auto;
   display: block;
   transition: transform 0.3s var(--ease);
@@ -569,13 +569,13 @@ p { margin: 0 0 1.1em; }
   object-fit: cover;
 }
 
-/* Kampioens-zegel */
+/* Kampioens-zegel — schommelt als een opgehangen trofee */
 .champion-seal {
   position: absolute;
-  bottom: -28px;
-  right: -28px;
-  width: 150px;
-  height: 150px;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 130px;
+  height: 130px;
   background: var(--gold);
   color: var(--cream);
   border-radius: 50%;
@@ -585,29 +585,47 @@ p { margin: 0 0 1.1em; }
   justify-content: center;
   text-align: center;
   font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   line-height: 1.3;
-  box-shadow: 0 6px 30px rgba(31, 26, 20, 0.18);
+  box-shadow: 0 8px 28px rgba(31, 26, 20, 0.35), inset 0 -3px 8px rgba(31, 26, 20, 0.12);
   z-index: 2;
-  transform: rotate(-8deg);
-  animation: gentle-float 6s ease-in-out infinite;
+  transform-origin: top center;
+  animation: trophy-swing 5s ease-in-out infinite;
+}
+
+.champion-seal::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 2px;
+  height: 12px;
+  background: linear-gradient(to bottom, transparent, var(--gold));
+  transform: translateX(-50%);
 }
 
 .champion-seal strong {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 500;
   font-style: italic;
   display: block;
   margin: 0.15rem 0;
   letter-spacing: 0;
+  color: var(--cream);
 }
 
-@keyframes gentle-float {
-  0%, 100% { transform: rotate(-8deg) translateY(0); }
-  50% { transform: rotate(-6deg) translateY(-6px); }
+@keyframes trophy-swing {
+  0%, 100% { transform: rotate(-6deg); }
+  25%      { transform: rotate(-10deg); }
+  50%      { transform: rotate(-3deg); }
+  75%      { transform: rotate(-9deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .champion-seal { animation: none; transform: rotate(-6deg); }
 }
 
 /* ---------- Verhaal-snippet (Home) ---------- */
@@ -936,6 +954,7 @@ p { margin: 0 0 1.1em; }
   font-style: italic;
   color: var(--crust);
   line-height: 1;
+  white-space: nowrap;
 }
 
 .over-stat .stat span {
@@ -1335,14 +1354,14 @@ p { margin: 0 0 1.1em; }
   }
 
   .champion-seal {
-    width: 175px;
-    height: 175px;
-    bottom: -32px;
-    right: -32px;
+    width: 165px;
+    height: 165px;
+    bottom: 2rem;
+    right: 2rem;
     font-size: 0.78rem;
   }
 
-  .champion-seal strong { font-size: 1.7rem; }
+  .champion-seal strong { font-size: 1.65rem; }
 }
 
 /* Desktop — 1200px+ */
