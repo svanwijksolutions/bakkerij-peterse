@@ -13,7 +13,10 @@
   /* ---------- 1. Component laden via fetch() — ondersteunt meerdere top-level elementen ---------- */
   async function loadComponent(id, url) {
     const placeholder = document.getElementById(id);
-    if (!placeholder) return;
+    if (!placeholder) {
+      console.warn(`[Bakkerij Peterse] Placeholder #${id} niet gevonden — script staat misschien voor de HTML.`);
+      return false;
+    }
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -26,8 +29,19 @@
         fragment.appendChild(temp.firstChild);
       }
       placeholder.replaceWith(fragment);
+      return true;
     } catch (err) {
-      console.warn(`Component ${url} kon niet geladen worden:`, err);
+      // Veelvoorkomend: file:// → CORS-blokkering. Geef bruikbare hint.
+      const isFileProtocol = window.location.protocol === 'file:';
+      console.error(`[Bakkerij Peterse] Component ${url} kon niet geladen worden:`, err);
+      if (isFileProtocol) {
+        console.warn(
+          '[Bakkerij Peterse] Je opent de site via file:// — fetch() werkt dan niet.\n' +
+          'Gebruik Live Server in VS Code (rechtermuisklik index.html → Open with Live Server),\n' +
+          'of upload naar GitHub Pages / Netlify.'
+        );
+      }
+      return false;
     }
   }
 
@@ -35,7 +49,16 @@
   function initMobileMenu() {
     const toggle = document.querySelector('.menu-toggle');
     const menu = document.querySelector('.mobile-menu');
-    if (!toggle || !menu) return;
+    if (!toggle || !menu) {
+      console.warn(
+        '[Bakkerij Peterse] Mobile menu kon niet geïnitialiseerd worden.\n' +
+        `  .menu-toggle gevonden: ${!!toggle}\n` +
+        `  .mobile-menu gevonden: ${!!menu}\n` +
+        'Vermoedelijke oorzaak: header.html is niet correct geladen via fetch().'
+      );
+      return;
+    }
+    console.log('[Bakkerij Peterse] Mobile menu ready ✓');
 
     const openMenu = () => {
       toggle.classList.add('open');
@@ -112,14 +135,23 @@
   }
 
   /* ---------- Init ---------- */
-  document.addEventListener('DOMContentLoaded', async () => {
-    await Promise.all([
+  async function init() {
+    console.log('[Bakkerij Peterse] Init started');
+    const [headerOk, footerOk] = await Promise.all([
       loadComponent('site-header', 'components/header.html'),
       loadComponent('site-footer', 'components/footer.html'),
     ]);
+    console.log(`[Bakkerij Peterse] Components loaded — header: ${headerOk}, footer: ${footerOk}`);
     initMobileMenu();
     setActiveLink();
     setYear();
     initReveal();
-  });
+  }
+
+  // Met defer draait dit script ná DOMContentLoaded, dus check state direct.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
