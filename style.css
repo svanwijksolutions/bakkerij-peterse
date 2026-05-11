@@ -251,6 +251,13 @@ p { margin: 0 0 1.1em; }
   opacity: 1;
 }
 
+/* WhatsApp float verbergen wanneer mobile menu open is */
+body.menu-open .whatsapp-float {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s var(--ease);
+}
+
 /* ---------- Bestel-sectie (Daan & Sylvia) ---------- */
 .bestel-section {
   background: var(--cream);
@@ -296,7 +303,7 @@ p { margin: 0 0 1.1em; }
   border-left: 2px solid var(--gold);
 }
 
-.bestel-team-member h4 {
+.bestel-team-member h3 {
   font-family: var(--font-display);
   font-style: italic;
   font-size: 1.2rem;
@@ -445,7 +452,15 @@ p { margin: 0 0 1.1em; }
   display: flex;
   flex-direction: column;
   gap: 5px;
-  padding: 0.5rem;
+  padding: 11px;
+  margin: -11px;
+  background: transparent;
+  position: relative;
+  z-index: 115;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
 }
 
 .menu-toggle span {
@@ -453,6 +468,7 @@ p { margin: 0 0 1.1em; }
   height: 1.5px;
   background: var(--ink);
   transition: all 0.3s var(--ease);
+  display: block;
 }
 
 .menu-toggle.open span:nth-child(1) {
@@ -479,11 +495,13 @@ p { margin: 0 0 1.1em; }
   padding: 0;
   transform: translateX(100%);
   transition: transform 0.4s var(--ease);
-  z-index: 99;
+  z-index: 110;
+  visibility: hidden;
 }
 
 .mobile-menu.open {
   transform: translateX(0);
+  visibility: visible;
 }
 
 .mobile-menu a {

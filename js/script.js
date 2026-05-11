@@ -37,20 +37,41 @@
     const menu = document.querySelector('.mobile-menu');
     if (!toggle || !menu) return;
 
-    toggle.addEventListener('click', () => {
-      const isOpen = toggle.classList.toggle('open');
-      menu.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', String(isOpen));
-      document.body.style.overflow = isOpen ? 'hidden' : '';
+    const openMenu = () => {
+      toggle.classList.add('open');
+      menu.classList.add('open');
+      document.body.classList.add('menu-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeMenu = () => {
+      toggle.classList.remove('open');
+      menu.classList.remove('open');
+      document.body.classList.remove('menu-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    };
+
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (toggle.classList.contains('open')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
     });
 
+    // Sluit menu bij link-klik
     menu.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        toggle.classList.remove('open');
-        menu.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-      });
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Sluit menu met Escape-toets
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.classList.contains('open')) {
+        closeMenu();
+      }
     });
   }
 
